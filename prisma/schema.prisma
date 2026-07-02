@@ -1,7 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ReminderType {
+  DM
+  ROLE_PING
+}
+
 model GuildConfig {
   guildId String @id
 
-  timezone                String?
   upcomingEventsChannelId String?
   reminderChannelId       String?
   pingRoleId              String?
@@ -12,8 +25,6 @@ model GuildConfig {
   dmReminderTemplate   String?
   roleReminderTemplate String?
 
-  scheduleBoardMessageId String?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -23,8 +34,8 @@ model ScheduledEvent {
 
   guildId String
 
-  title        String
-  startsAtUnix Int
+  title String
+  startsAt DateTime
 
   creatorUserId String
 
@@ -37,7 +48,7 @@ model ScheduledEvent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([guildId, startsAtUnix])
+  @@index([guildId, startsAt])
 }
 
 model ScheduledSignup {
@@ -59,7 +70,7 @@ model ReminderLog {
 
   eventId       String
   offsetMinutes Int
-  type          String // "DM" | "ROLE_PING"
+  type          ReminderType
 
   event ScheduledEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
 

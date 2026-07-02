@@ -12,14 +12,17 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "commands:register": "tsx src/registerCommands.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
     "discord.js": "^14.21.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "luxon": "^3.7.2"
   },
   "devDependencies": {
+    "@types/luxon": "^3.7.2",
     "@types/node": "^22.13.14",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
