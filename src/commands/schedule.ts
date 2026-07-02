@@ -11,32 +11,27 @@ export const scheduleCommand: Command = {
     .setName("schedule")
     .setDescription("Schedule a public match.")
     .addStringOption((option) =>
-      option
-        .setName("title")
-        .setDescription("Event title.")
-        .setRequired(true),
+      option.setName("title").setDescription("Event title.").setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("start")
-        .setDescription(
-          "Start time: MM-dd-yyyy h:mm AM/PM, e.g. 07-15-2026 8:00 PM.",
-        )
-        .setRequired(true),
+        .setDescription("Start time: MM-dd-yyyy h:mm AM/PM, e.g. 07-15-2026 8:00 PM.")
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("timezone")
         .setDescription("IANA timezone, e.g. America/New_York.")
         .setRequired(true)
-        .setAutocomplete(true),
+        .setAutocomplete(true)
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) {
       await interaction.reply({
         content: "This command can only be used in a server.",
-        ephemeral: true,
+        ephemeral: true
       });
       return;
     }
@@ -48,7 +43,7 @@ export const scheduleCommand: Command = {
     if (!isValidTimeZone(timezone)) {
       await interaction.reply({
         content: `Invalid timezone: ${timezone}`,
-        ephemeral: true,
+        ephemeral: true
       });
       return;
     }
@@ -60,7 +55,7 @@ export const scheduleCommand: Command = {
     } catch (error) {
       await interaction.reply({
         content: error instanceof Error ? error.message : "Invalid start time.",
-        ephemeral: true,
+        ephemeral: true
       });
       return;
     }
@@ -69,14 +64,25 @@ export const scheduleCommand: Command = {
       guildId: interaction.guildId,
       title,
       startsAt,
-      creatorUserId: interaction.user.id,
+      creatorUserId: interaction.user.id
     });
 
-    await scheduleBoardService.refresh(interaction.client, interaction.guildId);
+    try {
+      await scheduleBoardService.refresh(interaction.client, interaction.guildId);
+    } catch (error) {
+      console.error("Event was created, but schedule board refresh failed:", error);
+
+      await interaction.reply({
+        content:
+          "Event created, but I couldn't refresh the upcoming events board. Please check the configured upcoming channel and bot permissions.",
+        ephemeral: true
+      });
+      return;
+    }
 
     await interaction.reply({
-      content: "✅ Event created.",
-      ephemeral: true,
+      content: "Event created.",
+      ephemeral: true
     });
-  },
+  }
 };

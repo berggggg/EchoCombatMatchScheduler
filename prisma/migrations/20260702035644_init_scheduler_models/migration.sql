@@ -4,9 +4,8 @@ CREATE TABLE "GuildConfig" (
     "upcomingEventsChannelId" TEXT,
     "reminderChannelId" TEXT,
     "pingRoleId" TEXT,
-    "reminderOffsetsMinutes" TEXT NOT NULL DEFAULT '[720,60]',
-    "dmReminderTemplate" TEXT,
-    "roleReminderTemplate" TEXT,
+    "dmReminderOffsetsMinutes" TEXT NOT NULL DEFAULT '[720,60]',
+    "roleReminderOffsetsMinutes" TEXT NOT NULL DEFAULT '[60,2]',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );

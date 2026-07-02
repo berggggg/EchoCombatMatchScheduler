@@ -12,17 +12,20 @@ export class EventRepository {
     signupMessageId?: string;
   }) {
     return prisma.scheduledEvent.create({
-      data,
+      data
     });
   }
 
-  async updateSignupMessage(eventId: string, data: {
-    signupChannelId: string;
-    signupMessageId: string;
-  }) {
+  async updateSignupMessage(
+    eventId: string,
+    data: {
+      signupChannelId: string;
+      signupMessageId: string;
+    }
+  ) {
     return prisma.scheduledEvent.update({
       where: { id: eventId },
-      data,
+      data
     });
   }
 
@@ -31,8 +34,8 @@ export class EventRepository {
       where: { id: eventId },
       include: {
         signups: true,
-        reminderLogs: true,
-      },
+        reminderLogs: true
+      }
     });
   }
 
@@ -41,45 +44,74 @@ export class EventRepository {
       where: {
         guildId,
         startsAt: {
-          gt: now,
-        },
+          gt: now
+        }
       },
       include: {
-        signups: true,
+        signups: true
       },
       orderBy: {
-        startsAt: "asc",
-      },
+        startsAt: "asc"
+      }
     });
   }
 
-  async getStaleBoardMessageRefs(
-    guildId: string,
-    channelId: string,
-    now = new Date(),
-  ) {
+  async getAllUpcomingForReminders(now = new Date()) {
+    return prisma.scheduledEvent.findMany({
+      where: {
+        startsAt: {
+          gt: now
+        }
+      },
+      include: {
+        signups: true,
+        reminderLogs: true
+      },
+      orderBy: {
+        startsAt: "asc"
+      }
+    });
+  }
+
+  async getStartedForExpiryCleanup(now = new Date()) {
+    return prisma.scheduledEvent.findMany({
+      where: {
+        startsAt: {
+          lte: now
+        }
+      },
+      include: {
+        signups: true
+      },
+      orderBy: {
+        startsAt: "asc"
+      }
+    });
+  }
+
+  async getStaleBoardMessageRefs(guildId: string, channelId: string, now = new Date()) {
     return prisma.scheduledEvent.findMany({
       where: {
         guildId,
         signupChannelId: channelId,
         signupMessageId: {
-          not: null,
+          not: null
         },
         startsAt: {
-          lte: now,
-        },
+          lte: now
+        }
       },
       select: {
         id: true,
         signupChannelId: true,
-        signupMessageId: true,
-      },
+        signupMessageId: true
+      }
     });
   }
 
   async delete(eventId: string) {
     return prisma.scheduledEvent.delete({
-      where: { id: eventId },
+      where: { id: eventId }
     });
   }
 
@@ -88,14 +120,14 @@ export class EventRepository {
       where: {
         eventId_userId: {
           eventId,
-          userId,
-        },
+          userId
+        }
       },
       create: {
         eventId,
-        userId,
+        userId
       },
-      update: {},
+      update: {}
     });
   }
 
@@ -103,24 +135,30 @@ export class EventRepository {
     return prisma.scheduledSignup.deleteMany({
       where: {
         eventId,
-        userId,
-      },
+        userId
+      }
     });
   }
 
   async getSignupCount(eventId: string) {
     return prisma.scheduledSignup.count({
-      where: { eventId },
+      where: { eventId }
     });
   }
 
-  async createReminderLog(data: {
-    eventId: string;
-    offsetMinutes: number;
-    type: ReminderType;
-  }) {
+  async createReminderLog(data: { eventId: string; offsetMinutes: number; type: ReminderType }) {
     return prisma.reminderLog.create({
-      data,
+      data
     });
+  }
+
+  async reminderLogExists(data: { eventId: string; offsetMinutes: number; type: ReminderType }) {
+    const log = await prisma.reminderLog.findUnique({
+      where: {
+        eventId_offsetMinutes_type: data
+      }
+    });
+
+    return log !== null;
   }
 }

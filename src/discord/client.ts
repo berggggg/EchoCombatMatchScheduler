@@ -3,6 +3,7 @@ import { Client, Events, GatewayIntentBits } from "discord.js";
 import { autocompleteProviders } from "../autocomplete/index.js";
 import { findButtonHandler } from "../buttons/index.js";
 import { commandMap } from "../commands/index.js";
+import { reminderService } from "../services/ReminderService.js";
 import { isDiscordUnknownMessageError } from "../util/discordErrors.js";
 
 export const client = new Client({
@@ -11,6 +12,7 @@ export const client = new Client({
 
 client.once(Events.ClientReady, (client) => {
   console.log(`Logged in as ${client.user.tag}`);
+  reminderService.start(client);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
