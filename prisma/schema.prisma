@@ -1,37 +1,69 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 model GuildConfig {
-  id        String   @id @default(cuid())
-  guildId   String   @unique
+  guildId String @id
+
+  timezone                String?
+  upcomingEventsChannelId String?
+  reminderChannelId       String?
+  pingRoleId              String?
+
+  // JSON array of minute offsets before event, e.g. [720, 60]
+  reminderOffsetsMinutes String @default("[720,60]")
+
+  dmReminderTemplate   String?
+  roleReminderTemplate String?
+
+  scheduleBoardMessageId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model ScheduledEvent {
-  id        String   @id @default(cuid())
-  guildId   String
-  title     String
-  startsAt  DateTime
+  id String @id @default(cuid())
+
+  guildId String
+
+  title        String
+  startsAtUnix Int
+
+  creatorUserId String
+
+  signupChannelId String?
+  signupMessageId String?
+
+  signups      ScheduledSignup[]
+  reminderLogs ReminderLog[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([guildId, startsAtUnix])
 }
 
 model ScheduledSignup {
-  id        String   @id @default(cuid())
-  eventId   String
-  userId    String
+  id String @id @default(cuid())
+
+  eventId String
+  userId  String
+
+  event ScheduledEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+  @@index([userId])
 }
 
 model ReminderLog {
-  id        String   @id @default(cuid())
-  eventId   String
-  sentAt    DateTime @default(now())
+  id String @id @default(cuid())
+
+  eventId       String
+  offsetMinutes Int
+  type          String // "DM" | "ROLE_PING"
+
+  event ScheduledEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  sentAt DateTime @default(now())
+
+  @@unique([eventId, offsetMinutes, type])
 }
