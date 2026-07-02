@@ -141,7 +141,7 @@ export class ReminderDispatcher {
         : "No players signed up.";
 
     return (
-      `# Echo Combat Games Reminder!\n` +
+      `# 🎮 Echo Combat Games Reminder!\n` +
       `## **${workItem.event.title}** starts at <t:${unix}:F> (<t:${unix}:R>).\n\n` +
       `Players (${workItem.event.signups.length}):\n` +
       playerList

@@ -18,8 +18,8 @@ export function buildEventMessage(
     content:
       `# :echothinking: **${event.title}**\n\n` +
       `~~--------------------------------------------------~~\n` +
-      `## Starts: <t:${unix}:F>\n` +
-      `### When: *<t:${unix}:R>*\n\n` +
+      `## 🕒 <t:${unix}:F>\n` +
+      `### ⏳ *<t:${unix}:R>*\n\n` +
       `~~--------------------------------------------------~~\n` +
       `**Players (${event.signups.length})**\n` +
       `${signupList}` +

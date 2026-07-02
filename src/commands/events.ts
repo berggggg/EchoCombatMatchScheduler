@@ -39,8 +39,8 @@ export const eventsCommand: Command = {
       return (
         `~~--------------------------------------------------~~\n` +
         `## **${index + 1}. :echothinking: ${event.title}**\n` +
-        `Starts: <t:${unix}:F>\n` +
-        `When: *<t:${unix}:R>*\n\n` +
+        `🕒 <t:${unix}:F>\n` +
+        `⏳ *<t:${unix}:R>*\n\n` +
         `Players (${event.signups.length}):\n` +
         "- " +
         `${signupList}`

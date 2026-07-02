@@ -81,7 +81,7 @@ export const scheduleCommand: Command = {
     }
 
     await interaction.reply({
-      content: "Event created.",
+      content: "✅ Event created.",
       ephemeral: true
     });
   }
