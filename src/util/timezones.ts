@@ -5,7 +5,7 @@ const fallbackTimeZones = [
   "America/Denver",
   "America/Los_Angeles",
   "Europe/London",
-  "Europe/Berlin",
+  "Europe/Berlin"
 ];
 
 const supportedTimeZones = new Set(getSupportedTimeZones());

@@ -5,8 +5,7 @@ import { EventRepository } from "../repositories/EventRepository.js";
 type EventWithSignups = ScheduledEvent & { signups: ScheduledSignup[] };
 
 export type LeaveEventResult =
-  | { deleted: true; event: EventWithSignups }
-  | { deleted: false; event: EventWithSignups };
+  { deleted: true; event: EventWithSignups } | { deleted: false; event: EventWithSignups };
 
 export class EventService {
   constructor(private readonly eventRepository = new EventRepository()) {}
@@ -21,7 +20,7 @@ export class EventService {
       guildId: input.guildId,
       title: input.title,
       startsAt: input.startsAt,
-      creatorUserId: input.creatorUserId,
+      creatorUserId: input.creatorUserId
     });
 
     await this.eventRepository.addSignup(event.id, input.creatorUserId);
@@ -67,8 +66,7 @@ export class EventService {
 
     await this.eventRepository.removeSignup(eventId, userId);
 
-    const remainingSignupCount =
-      await this.eventRepository.getSignupCount(eventId);
+    const remainingSignupCount = await this.eventRepository.getSignupCount(eventId);
 
     if (remainingSignupCount === 0) {
       try {

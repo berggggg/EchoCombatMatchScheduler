@@ -1,34 +1,24 @@
 import { ButtonInteraction } from "discord.js";
 
 import { eventService } from "../services/EventService.js";
-import {
-  BoardMessageRef,
-  scheduleBoardService,
-} from "../services/ScheduleBoardService.js";
+import { BoardMessageRef, scheduleBoardService } from "../services/ScheduleBoardService.js";
 
-export async function handleEventJoinButton(
-  interaction: ButtonInteraction,
-  eventId: string,
-) {
+export async function handleEventJoinButton(interaction: ButtonInteraction, eventId: string) {
   await interaction.deferUpdate();
 
   try {
     await eventService.joinEvent(eventId, interaction.user.id);
   } catch (error) {
     await interaction.followUp({
-      content:
-        error instanceof Error ? error.message : "This event no longer exists.",
-      ephemeral: true,
+      content: error instanceof Error ? error.message : "This event no longer exists.",
+      ephemeral: true
     });
   } finally {
     await refreshScheduleBoard(interaction);
   }
 }
 
-export async function handleEventLeaveButton(
-  interaction: ButtonInteraction,
-  eventId: string,
-) {
+export async function handleEventLeaveButton(interaction: ButtonInteraction, eventId: string) {
   await interaction.deferUpdate();
   const staleMessageRefs: BoardMessageRef[] = [];
 
@@ -39,26 +29,24 @@ export async function handleEventLeaveButton(
       if (result.event.signupChannelId && result.event.signupMessageId) {
         staleMessageRefs.push({
           channelId: result.event.signupChannelId,
-          messageId: result.event.signupMessageId,
+          messageId: result.event.signupMessageId
         });
       }
 
       staleMessageRefs.push({
         channelId: interaction.message.channelId,
-        messageId: interaction.message.id,
+        messageId: interaction.message.id
       });
 
       await interaction.followUp({
-        content:
-          "You left the event. Since no players remain signed up, the event was deleted.",
-        ephemeral: true,
+        content: "You left the event. Since no players remain signed up, the event was deleted.",
+        ephemeral: true
       });
     }
   } catch (error) {
     await interaction.followUp({
-      content:
-        error instanceof Error ? error.message : "This event no longer exists.",
-      ephemeral: true,
+      content: error instanceof Error ? error.message : "This event no longer exists.",
+      ephemeral: true
     });
   } finally {
     await refreshScheduleBoard(interaction, staleMessageRefs);
@@ -67,15 +55,11 @@ export async function handleEventLeaveButton(
 
 async function refreshScheduleBoard(
   interaction: ButtonInteraction,
-  staleMessageRefs: BoardMessageRef[] = [],
+  staleMessageRefs: BoardMessageRef[] = []
 ) {
   if (!interaction.guildId) {
     return;
   }
 
-  await scheduleBoardService.refresh(
-    interaction.client,
-    interaction.guildId,
-    staleMessageRefs,
-  );
+  await scheduleBoardService.refresh(interaction.client, interaction.guildId, staleMessageRefs);
 }

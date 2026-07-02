@@ -13,7 +13,7 @@ export const eventsCommand: Command = {
     if (!interaction.guildId) {
       await interaction.reply({
         content: "This command can only be used in a server.",
-        ephemeral: true,
+        ephemeral: true
       });
       return;
     }
@@ -23,7 +23,7 @@ export const eventsCommand: Command = {
     if (events.length === 0) {
       await interaction.reply({
         content: "No upcoming events are currently scheduled.",
-        ephemeral: true,
+        ephemeral: true
       });
       return;
     }
@@ -33,23 +33,23 @@ export const eventsCommand: Command = {
 
       const signupList =
         event.signups.length > 0
-            ? event.signups.map((signup) => `<@${signup.userId}>`).join(", ")
-            : "No players signed up.";
+          ? event.signups.map((signup) => `<@${signup.userId}>`).join(", ")
+          : "No players signed up.";
 
       return (
         `~~--------------------------------------------------~~\n` +
         `## **${index + 1}. :echothinking: ${event.title}**\n` +
-        `🕒 <t:${unix}:F>\n` +
-        `⏳ *<t:${unix}:R>*\n\n` +
+        `Starts: <t:${unix}:F>\n` +
+        `When: *<t:${unix}:R>*\n\n` +
         `Players (${event.signups.length}):\n` +
-        '‎ - '+
+        "- " +
         `${signupList}`
       );
     });
 
     await interaction.reply({
       content: `# **Upcoming Events**\n${eventLines.join("\n\n")}`,
-      ephemeral: true,
+      ephemeral: true
     });
-  },
+  }
 };

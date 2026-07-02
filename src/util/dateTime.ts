@@ -2,13 +2,11 @@ import { DateTime } from "luxon";
 
 export function parseScheduledDateTime(start: string, timezone: string): Date {
   const parsed = DateTime.fromFormat(start, "MM-dd-yyyy h:mm a", {
-    zone: timezone,
+    zone: timezone
   });
 
   if (!parsed.isValid) {
-    throw new Error(
-      `Invalid start time. Use MM-dd-yyyy h:mm AM/PM, e.g. 07-15-2026 8:00 PM.`,
-    );
+    throw new Error(`Invalid start time. Use MM-dd-yyyy h:mm AM/PM, e.g. 07-15-2026 8:00 PM.`);
   }
 
   if (parsed <= DateTime.now()) {

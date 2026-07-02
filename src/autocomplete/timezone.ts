@@ -34,6 +34,6 @@ export function timezoneAutocompleteProvider(input: string): AutocompleteChoice[
     .slice(0, 25)
     .map((timeZone) => ({
       name: timeZone,
-      value: timeZone,
+      value: timeZone
     }));
 }

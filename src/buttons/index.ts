@@ -1,9 +1,6 @@
 import { ButtonInteraction } from "discord.js";
 
-import {
-  handleEventJoinButton,
-  handleEventLeaveButton,
-} from "./eventButtons.js";
+import { handleEventJoinButton, handleEventLeaveButton } from "./eventButtons.js";
 
 export interface ButtonHandler {
   prefix: string;
@@ -13,12 +10,12 @@ export interface ButtonHandler {
 export const buttonHandlers: ButtonHandler[] = [
   {
     prefix: "event_join:",
-    execute: handleEventJoinButton,
+    execute: handleEventJoinButton
   },
   {
     prefix: "event_leave:",
-    execute: handleEventLeaveButton,
-  },
+    execute: handleEventLeaveButton
+  }
 ];
 
 export function findButtonHandler(customId: string) {
