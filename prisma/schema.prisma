@@ -18,6 +18,7 @@ model GuildConfig {
   upcomingEventsChannelId String?
   reminderChannelId       String?
   pingRoleId              String?
+  eventEmoji              String? @default("<:echothinking:1523785136632496168>")
 
   // JSON array of minute offsets before event pings, e.g. [720, 60]
   dmReminderOffsetsMinutes   String @default("[720,60]")

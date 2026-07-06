@@ -19,6 +19,7 @@ export class ConfigRepository {
       upcomingEventsChannelId?: string;
       reminderChannelId?: string;
       pingRoleId?: string;
+      eventEmoji?: string;
       dmReminderOffsetsMinutes?: string;
       roleReminderOffsetsMinutes?: string;
       eventExpiryOffsetMinutes?: number;

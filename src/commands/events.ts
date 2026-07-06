@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 import type { Command } from "./index.js";
+import { configService } from "../services/ConfigService.js";
 import { eventService } from "../services/EventService.js";
 import { toDiscordUnixTimestamp } from "../util/dateTime.js";
 
@@ -19,6 +20,8 @@ export const eventsCommand: Command = {
     }
 
     const events = await eventService.getUpcomingEvents(interaction.guildId);
+    const config = await configService.getOrCreateConfig(interaction.guildId);
+    const eventEmoji = config.eventEmoji ?? "<:echothinking:1523785136632496168>";
 
     if (events.length === 0) {
       await interaction.reply({
@@ -38,7 +41,7 @@ export const eventsCommand: Command = {
 
       return (
         `~~--------------------------------------------------~~\n` +
-        `## **${index + 1}. :echothinking: ${event.title}**\n` +
+        `## **${index + 1}. ${eventEmoji} ${event.title}**\n` +
         `🕒 <t:${unix}:F>\n` +
         `⏳ *<t:${unix}:R>*\n\n` +
         `Players (${event.signups.length}):\n` +
@@ -49,6 +52,7 @@ export const eventsCommand: Command = {
 
     await interaction.reply({
       content: `# **Upcoming Events**\n${eventLines.join("\n\n")}`,
+      allowedMentions: { parse: [] },
       ephemeral: true
     });
   }

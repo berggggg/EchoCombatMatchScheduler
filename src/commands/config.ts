@@ -29,6 +29,13 @@ export const configCommand: Command = {
     )
     .addStringOption((option) =>
       option
+        .setName("event_emoji")
+        .setDescription("Emoji shown beside event titles, e.g. <:echothinking:1523785136632496168>.")
+        .setMaxLength(100)
+        .setRequired(false)
+    )
+    .addStringOption((option) =>
+      option
         .setName("dm_reminder_offsets")
         .setDescription("DM reminder offsets in minutes, e.g. 720,60.")
         .setRequired(false)
@@ -59,6 +66,7 @@ export const configCommand: Command = {
     const upcomingChannel = interaction.options.getChannel("upcoming_channel");
     const reminderChannel = interaction.options.getChannel("reminder_channel");
     const pingRole = interaction.options.getRole("ping_role");
+    const eventEmojiInput = interaction.options.getString("event_emoji");
     const dmReminderOffsets = interaction.options.getString("dm_reminder_offsets");
     const roleReminderOffsets = interaction.options.getString("role_reminder_offsets");
     const eventExpiryOffset = interaction.options.getInteger("event_expiry_offset");
@@ -67,6 +75,7 @@ export const configCommand: Command = {
       upcomingChannel ||
       reminderChannel ||
       pingRole ||
+      eventEmojiInput ||
       dmReminderOffsets ||
       roleReminderOffsets ||
       eventExpiryOffset !== null;
@@ -82,9 +91,11 @@ export const configCommand: Command = {
           `Upcoming events channel: ${config.upcomingEventsChannelId ? `<#${config.upcomingEventsChannelId}>` : "not set"}\n` +
           `Reminder channel: ${config.reminderChannelId ? `<#${config.reminderChannelId}>` : "not set"}\n` +
           `Ping role: ${config.pingRoleId ? `<@&${config.pingRoleId}>` : "not set"}\n` +
+          `Event emoji: ${config.eventEmoji ?? "<:echothinking:1523785136632496168>"}\n` +
           `DM reminder offsets: ${dmOffsets}\n` +
           `Role ping reminder offsets: ${roleOffsets}\n` +
           `Event expiry offset: ${config.eventExpiryOffsetMinutes} minutes`,
+        allowedMentions: { parse: [] },
         ephemeral: true
       });
 
@@ -94,6 +105,7 @@ export const configCommand: Command = {
     let dmReminderOffsetsMinutes: number[] | undefined;
     let roleReminderOffsetsMinutes: number[] | undefined;
     let eventExpiryOffsetMinutes: number | undefined;
+    let eventEmoji: string | undefined;
 
     try {
       dmReminderOffsetsMinutes = dmReminderOffsets
@@ -103,6 +115,8 @@ export const configCommand: Command = {
       roleReminderOffsetsMinutes = roleReminderOffsets
         ? configService.parseReminderOffsets(roleReminderOffsets)
         : undefined;
+
+      eventEmoji = configService.parseEmoji(eventEmojiInput);
 
       eventExpiryOffsetMinutes = configService.parsePositiveInteger(
         eventExpiryOffset,
@@ -121,6 +135,7 @@ export const configCommand: Command = {
       upcomingEventsChannelId: upcomingChannel?.id,
       reminderChannelId: reminderChannel?.id,
       pingRoleId: pingRole?.id,
+      eventEmoji,
       dmReminderOffsetsMinutes,
       roleReminderOffsetsMinutes,
       eventExpiryOffsetMinutes
@@ -132,9 +147,11 @@ export const configCommand: Command = {
         `Upcoming events channel: ${config.upcomingEventsChannelId ? `<#${config.upcomingEventsChannelId}>` : "not set"}\n` +
         `Reminder channel: ${config.reminderChannelId ? `<#${config.reminderChannelId}>` : "not set"}\n` +
         `Ping role: ${config.pingRoleId ? `<@&${config.pingRoleId}>` : "not set"}\n` +
+        `Event emoji: ${config.eventEmoji ?? "<:echothinking:1523785136632496168>"}\n` +
         `DM reminder offsets: ${configService.getDmReminderOffsets(config).join(", ")}\n` +
         `Role reminder offsets: ${configService.getRoleReminderOffsets(config).join(", ")}\n` +
         `Event expiry offset: ${config.eventExpiryOffsetMinutes} minutes`,
+      allowedMentions: { parse: [] },
       ephemeral: true
     });
   }

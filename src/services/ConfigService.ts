@@ -7,6 +7,7 @@ export interface UpdateGuildConfigInput {
   upcomingEventsChannelId?: string;
   reminderChannelId?: string;
   pingRoleId?: string;
+  eventEmoji?: string;
   dmReminderOffsetsMinutes?: number[];
   roleReminderOffsetsMinutes?: number[];
   eventExpiryOffsetMinutes?: number;
@@ -66,6 +67,20 @@ export class ConfigService {
     }
 
     return input;
+  }
+
+  parseEmoji(input: string | null): string | undefined {
+    if (input === null) {
+      return undefined;
+    }
+
+    const emoji = input.trim();
+
+    if (!emoji || emoji.includes("\n") || emoji.length > 100) {
+      throw new Error("Event emoji must be a non-empty single-line value up to 100 characters.");
+    }
+
+    return emoji;
   }
 
   getDmReminderOffsets(config: { dmReminderOffsetsMinutes: string }): number[] {

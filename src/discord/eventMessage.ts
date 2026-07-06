@@ -5,7 +5,8 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { toDiscordUnixTimestamp } from "../util/dateTime.js";
 
 export function buildEventMessage(
-  event: ScheduledEvent & { signups: ScheduledSignup[] }
+  event: ScheduledEvent & { signups: ScheduledSignup[] },
+  eventEmoji: string
 ): BaseMessageOptions & { content: string } {
   const unix = toDiscordUnixTimestamp(event.startsAt);
 
@@ -16,7 +17,7 @@ export function buildEventMessage(
 
   return {
     content:
-      `# :echothinking: **${event.title}**\n\n` +
+      `# ${eventEmoji} **${event.title}**\n\n` +
       `~~--------------------------------------------------~~\n` +
       `## 🕒 <t:${unix}:F>\n` +
       `### ⏳ *<t:${unix}:R>*\n\n` +

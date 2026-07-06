@@ -44,10 +44,20 @@ export class ScheduleBoardService {
     const events = await this.eventRepository.getUpcoming(guildId, now);
     const validMessagesByEventId = await this.fetchValidBoardMessages(boardChannel, events);
     const preserveCount = this.getPreservedPrefixCount(events, validMessagesByEventId);
+    const eventEmoji = this.getEventEmoji(config);
 
     try {
-      await this.editPreservedPrefix(events.slice(0, preserveCount), validMessagesByEventId);
-      await this.recreateSuffix(boardChannel, events.slice(preserveCount), validMessagesByEventId);
+      await this.editPreservedPrefix(
+        events.slice(0, preserveCount),
+        validMessagesByEventId,
+        eventEmoji
+      );
+      await this.recreateSuffix(
+        boardChannel,
+        events.slice(preserveCount),
+        validMessagesByEventId,
+        eventEmoji
+      );
     } catch (error) {
       if (retryOnMissingMessage && isDiscordUnknownMessageError(error)) {
         await this.refresh(client, guildId, knownStaleMessageRefs, false);
@@ -111,7 +121,8 @@ export class ScheduleBoardService {
 
   private async editPreservedPrefix(
     events: UpcomingEvent[],
-    validMessagesByEventId: Map<string, Message>
+    validMessagesByEventId: Map<string, Message>,
+    eventEmoji: string
   ) {
     for (const event of events) {
       const message = validMessagesByEventId.get(event.id);
@@ -120,7 +131,7 @@ export class ScheduleBoardService {
         continue;
       }
 
-      await message.edit(buildEventMessage(event));
+      await message.edit(buildEventMessage(event, eventEmoji));
 
       if (event.signupChannelId !== message.channelId || event.signupMessageId !== message.id) {
         await this.eventRepository.updateSignupMessage(event.id, {
@@ -134,7 +145,8 @@ export class ScheduleBoardService {
   private async recreateSuffix(
     channel: BoardChannel,
     events: UpcomingEvent[],
-    validMessagesByEventId: Map<string, Message>
+    validMessagesByEventId: Map<string, Message>,
+    eventEmoji: string
   ) {
     for (const event of events) {
       const message = validMessagesByEventId.get(event.id);
@@ -145,7 +157,7 @@ export class ScheduleBoardService {
     }
 
     for (const event of events) {
-      const message = await channel.send(buildEventMessage(event));
+      const message = await channel.send(buildEventMessage(event, eventEmoji));
 
       await this.eventRepository.updateSignupMessage(event.id, {
         signupChannelId: message.channelId,
@@ -217,6 +229,10 @@ export class ScheduleBoardService {
           component.customId.startsWith("event_")
       );
     });
+  }
+
+  private getEventEmoji(config: { eventEmoji: string | null }) {
+    return config.eventEmoji ?? "<:echothinking:1523785136632496168>";
   }
 }
 

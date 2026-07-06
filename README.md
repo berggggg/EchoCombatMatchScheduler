@@ -9,6 +9,7 @@ Status: v1.0.0 release.
 - Slash commands for scheduling, viewing, and configuring matches.
 - Per-event Discord messages with Join and Leave buttons.
 - Upcoming events board that keeps event messages ordered by start time.
+- Configurable event title emoji per server.
 - Automatic creator signup when an event is scheduled.
 - Event deletion when the last player leaves.
 - DM reminders for signed-up players.
@@ -138,6 +139,7 @@ SQLite data is stored in the `sqlite-data` named volume mounted at `/data`.
 - `/config upcoming_channel`: Set the channel for upcoming event board messages.
 - `/config reminder_channel`: Set the channel for role reminder pings.
 - `/config ping_role`: Set the role mentioned by role reminders.
+- `/config event_emoji`: Set the emoji shown beside event titles, for example `<:echothinking:1523785136632496168>`.
 - `/config dm_reminder_offsets`: Set comma-separated DM offsets in minutes before the event, for example `720,60`.
 - `/config role_reminder_offsets`: Set comma-separated role ping offsets in minutes before the event, for example `60,2`.
 - `/config event_expiry_offset`: Set minutes after event start before cleanup removes the event.
@@ -151,6 +153,7 @@ Defaults:
 - DM reminder offsets: `720,60`
 - Role reminder offsets: `60,2`
 - Event expiry offset: `90` minutes
+- Event emoji: `<:echothinking:1523785136632496168>`
 
 Channel and role settings are optional, but reminders that require missing settings are skipped and logged as errors.
 
